@@ -9,6 +9,9 @@ import Link from "next/link"
 import { ForecastChart } from "./forecast-chart"
 import { ForecastTable } from "./forecast-table"
 import { ForecastAnalysis } from "./forecast-analysis"
+import { ModelPrediction } from "./model-prediction"
+import { MarketInsights } from "./market-insights"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface ForecastResultsProps {
   commodity: string
@@ -50,31 +53,49 @@ export function ForecastResults({ commodity, forecastData, historicalData, rmse 
         FreshPrice: Price Prediction for Agricultural Commodities
       </h1>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-xl">{commodity} Price Forecast (2025-2029)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ForecastTable data={forecastData} />
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="forecast" className="mb-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="forecast">Price Forecast</TabsTrigger>
+          <TabsTrigger value="model">ML Model Prediction</TabsTrigger>
+          <TabsTrigger value="market">Market Insights</TabsTrigger>
+        </TabsList>
 
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <ForecastChart commodity={commodity} historicalData={historicalData} forecastData={forecastData} />
-        </CardContent>
-      </Card>
+        <TabsContent value="forecast" className="space-y-6 mt-6">
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-xl">{commodity} Price Forecast (2025-2029)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ForecastTable data={forecastData} />
+            </CardContent>
+          </Card>
 
-      <div className="text-sm text-gray-700 dark:text-gray-300 mb-6">
-        <p>
-          <strong>Model Accuracy:</strong> Training RMSE: {rmse.toFixed(4)}
-        </p>
-        <p className="mt-2 text-xs">Lower RMSE values indicate better prediction accuracy</p>
-      </div>
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <ForecastChart commodity={commodity} historicalData={historicalData} forecastData={forecastData} />
+            </CardContent>
+          </Card>
 
-      <div className="mb-10">
-        <ForecastAnalysis commodity={commodity} historicalData={historicalData} forecastData={forecastData} />
-      </div>
+          <div className="text-sm text-gray-700 dark:text-gray-300 mb-6">
+            <p>
+              <strong>Model Accuracy:</strong> Training RMSE: {rmse.toFixed(4)}
+            </p>
+            <p className="mt-2 text-xs">Lower RMSE values indicate better prediction accuracy</p>
+          </div>
+
+          <div className="mb-10">
+            <ForecastAnalysis commodity={commodity} historicalData={historicalData} forecastData={forecastData} />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="model" className="space-y-6 mt-6">
+          <ModelPrediction commodity={commodity} />
+        </TabsContent>
+
+        <TabsContent value="market" className="space-y-6 mt-6">
+          <MarketInsights commodity={commodity} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
