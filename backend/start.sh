@@ -1,5 +1,5 @@
 #!/bin/bash
-# Start script for the AgroValue backend
+# Start script for the FreshPrice backend
 
 # Ensure we're in the right directory
 cd "$(dirname "$0")"
@@ -13,6 +13,7 @@ fi
 # Check if virtual environment exists, create if not
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
+    cd ..
     python3 -m venv venv
 fi
 
@@ -21,8 +22,9 @@ source venv/bin/activate
 
 # Install dependencies
 echo "Installing dependencies..."
+cd backend
 pip install -r requirements.txt
 
 # Start the server
-echo "Starting AgroValue backend server..."
+echo "Starting FreshPrice backend server..."
 python main.py

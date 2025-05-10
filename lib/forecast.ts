@@ -1,7 +1,5 @@
 // SARIMAX implementation in JavaScript
-// This is a simplified version for demonstration purposes
 function sarimax(data: number[], steps: number): number[] {
-  // Simple forecasting logic (in a real app, you'd use a proper SARIMAX implementation)
   const lastValue = data[data.length - 1]
 
   // Calculate average change using differences

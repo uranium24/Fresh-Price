@@ -1,14 +1,3 @@
-"""
-This script converts the ML model to a pickle file for use in the backend.
-Run this script to generate the model.pkl file.
-
-Make sure to install the required libraries:
-pip install pandas scikit-learn statsmodels joblib numpy
-
-Run this script as:
-python generate_model_pickle.py
-"""
-
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, LabelEncoder
@@ -16,11 +5,16 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 import joblib
 import os
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 
 def main():
     print("Loading data...")
     # Load the dataset
-    df = pd.read_csv("../public/Agriculture_commodities_dataset.csv")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(script_dir, "Agriculture_commodities_dataset.csv")
+
+    # Load the file
+    df = pd.read_csv(csv_path)
     
     print("Processing data...")
     # Data preprocessing
@@ -60,19 +54,25 @@ def main():
     
     # Save model
     print("Saving model to model.pkl...")
-    joblib.dump(classifier, '../public/model.pkl')
-    
-    # Save encoders and scalers for future use
-    joblib.dump(le, '../public/label_encoder.pkl')
-    joblib.dump(mn, '../public/min_max_scaler.pkl')
+    # Inside main():
+    output_dir = script_dir  # Or use a subdirectory like "models/"
+    joblib.dump(classifier, os.path.join(output_dir, 'model.pkl'))
+    joblib.dump(le, os.path.join(output_dir, 'label_encoder.pkl'))
+    joblib.dump(mn, os.path.join(output_dir, 'min_max_scaler.pkl'))
+    print(f"Files saved to: {output_dir}")
     
     # Test prediction
     y_pred = classifier.predict(x_test)
-    from sklearn.metrics import r2_score, mean_squared_error
+    
+    # Evaluation metrics
     r2 = r2_score(y_test, y_pred)
     mse = mean_squared_error(y_test, y_pred)
-    
-    print(f"Model saved successfully! R² Score: {r2:.4f}, MSE: {mse:.4f}")
+    mae = mean_absolute_error(y_test, y_pred)
+    mape = mean_absolute_percentage_error(y_test, y_pred)
+    rmse = np.sqrt(mse)
+
+    # Print out the evaluation metrics
+    print(f"Model saved successfully! R² Score: {r2:.4f}, MSE: {mse:.4f}, MAE: {mae:.4f}, RMSE: {rmse:.4f}, MAPE: {mape:.4f}")
 
 if __name__ == "__main__":
     main()
